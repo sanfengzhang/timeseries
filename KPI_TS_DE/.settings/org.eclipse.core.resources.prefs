@@ -1,0 +1,9 @@
+eclipse.preferences.version=1
+encoding//src/test/air_ARIMA.py=utf-8
+encoding//src/test/dwt/pywttest.py=utf-8
+encoding//src/test/kpi_ARIMA_test.py=utf-8
+encoding//src/test/nptest.py=utf-8
+encoding//src/tmdetection/ARIMA_p_q.py=utf-8
+encoding//src/tmdetection/air_ARIMA_model.py=utf-8
+encoding//src/tmdetection/data_stationarity.py=utf-8
+encoding/<project>=UTF-8
