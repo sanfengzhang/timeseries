@@ -121,7 +121,7 @@ def p_q_choice(timeSer, nlags=40, alpha=.05):
 
 
 def get_ARMA(data, winSiz):  
-    ts_data = np.log(data)  
+    ts_data = np.log(data)
     rol_mean = ts_data.rolling(window=winSiz).mean()    
     rol_mean.dropna(inplace=True)    
     ts_data_diff_1 = rol_mean.diff(1)
@@ -130,8 +130,9 @@ def get_ARMA(data, winSiz):
     ts_data_diff_2 = ts_data_diff_1.diff(1)
     ts_data_diff_2.dropna(inplace=True) 
     r_stationarity = data_stationarity.stationarity_result_analyse(ts_data_diff_2)
+   
     if r_stationarity: 
-        model = ARMA(ts_data_diff_2, order=(4, 3)) 
+        model = ARMA(ts_data_diff_2, order=(2, 3)) 
         result_arma = model.fit(disp=-1, method='css')     
         return result_arma, ts_data_diff_1, rol_mean, ts_data 
     else:
@@ -140,24 +141,29 @@ def get_ARMA(data, winSiz):
 
 
 def pre_ARMA(data, win=12):
-    result = get_ARMA(data, win)  
+    result = get_ARMA(data, win) 
     
+    #===========================================================================
     # 残差白噪声检验
-    # check_resid_wd_acf_pacf_qq(result[0])
-      
+    # check_resid_wd_acf_pacf_qq(result[0])    #   
     # 获取预测的结果
+    #===========================================================================
     predict_ts = result[0].predict()
     # ts_data_diff_1进行移动
     diff_shift_ts = result[1].shift(1) 
-    diff_recover_1 = predict_ts.add(diff_shift_ts)    
+    diff_recover_1 = predict_ts.add(diff_shift_ts) 
+    print(diff_recover_1, predict_ts)   
     # 上述是对一次一阶差分进行还原，下面是对另一次一阶差分进行还原
     rol_shift_ts = result[2].shift(1)
     diff_recover = diff_recover_1.add(rol_shift_ts)
     rol_sum = result[3].rolling(window=11).sum()
-    rol_recover = diff_recover * 12 - rol_sum.shift(1)
+    rol_recover = diff_recover * 12 - rol_sum.shift(1)    
     log_recover = np.exp(rol_recover)
     log_recover.dropna(inplace=True)  
-    print(log_recover)
+    ts = data[log_recover.index] 
+    print(log_recover)  
+    print('ARMA RMSE: %.4f' % np.sqrt(sum((log_recover - ts) ** 2) / ts.size)) 
+    return result[0]
     
     
 def get_ARIMA(data, winSiz):
@@ -173,7 +179,7 @@ def get_ARIMA(data, winSiz):
 
 def pre_ARIMA(data, win=12):
     result = get_ARIMA(data, win) 
-    check_resid_wd_acf_pacf_qq(result[0])
+    # check_resid_wd_acf_pacf_qq(result[0])
     predict_ts = result[0].predict()
     diff_shift_ts = result[1].shift(1) 
     diff_recover = predict_ts.add(diff_shift_ts)    
@@ -183,13 +189,12 @@ def pre_ARIMA(data, win=12):
     rol_recover = (rol_shift_ts + diff_recover) * 12 - rol_sum.shift(1)
     log_recover = np.exp(rol_recover)
     log_recover.dropna(inplace=True)
-    print(log_recover)  
-    
+    ts = data[log_recover.index]   
+    print('ARMA RMSE: %.4f' % np.sqrt(sum((log_recover - ts) ** 2) / ts.size))
   
-"""残差白噪声序列检验、计算D-W检验的结果,越接近于2效果就好""" 
-
 
 def check_resid_wd_acf_pacf_qq(model):
+    """残差白噪声序列检验、计算D-W检验的结果,越接近于2效果就好""" 
     resid = model.resid 
     print(stats.normaltest(resid))
     print(sm.stats.durbin_watson(resid))
@@ -231,9 +236,14 @@ def proper_model(data_ts, maxLag):
                 init_q = q
                 init_properModel = results_ARMA
                 init_bic = bic
-    return init_bic, init_p, init_q, init_properModel    
+    return init_bic, init_p, init_q, init_properModel
 
-    
-pre_ARMA(data(), 12)
-pre_ARIMA(data(), 12)
-    
+#===============================================================================
+#===============================================================================
+# data = data()
+# train_size = int(len(data) * 0.67)   
+# air_ARMA = pre_ARMA(data[0:train_size], 12)
+# print(air_ARMA.predict('1957-01-01','1958-01-01'))
+#===============================================================================
+
+# pre_ARIMA(data, 12)
