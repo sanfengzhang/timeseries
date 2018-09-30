@@ -31,8 +31,10 @@ def draw_trend(timeSeries, size):
 
 # 自相关和偏相关图，默认阶数为31阶
 def draw_acf_pacf(ts, lags=31):
+    print(type(ts))
     f = plt.figure(facecolor='white')
     ax1 = f.add_subplot(211)
+    print(ts)
     plot_acf(ts, lags=31, ax=ax1)
     ax2 = f.add_subplot(212)
     plot_pacf(ts, lags=31, ax=ax2)

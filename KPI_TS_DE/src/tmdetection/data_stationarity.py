@@ -16,7 +16,7 @@ def  stationarity_result_analyse(tsdata):
         return False
     
 
-def dostationarity(tsdata):    
+def dostationarity(tsdata):  
     resultADF = adfuller(tsdata.dropna(), 1)
     return resultADF
 

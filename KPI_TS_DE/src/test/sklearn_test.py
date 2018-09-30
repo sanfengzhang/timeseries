@@ -61,6 +61,8 @@ def smpote_test():
     truth = truth_df[truth_df["KPI ID"] == kpi_names[0]]
     y = truth['label']
     
+    
+    
     X = truth.drop(columns=['label', 'KPI ID'])   
     sm = SMOTEENN()
     X_resampled, y_resampled = sm.fit_sample(X, y)   
@@ -74,16 +76,23 @@ def smpote_test():
     plt.show() 
       
     dfX=dfX.join(DFy).sort_values(by="timestamp" , ascending=True)
-    jsonData = {'timestamp': '', 'value': "", 'label': ''}
-    file = open("D:\\kpi\\result_tmp.txt", 'w')
-    for  row in dfX.iterrows():
-        jsonData['timestamp'] = row['timestamp']
-        jsonData['value'] = row['value']   
-        jsonData['label'] = row['label']       
-        file.write(json.dumps(jsonData, ensure_ascii=False) + '\n')
-
-    file.close()
-    print("end....")
+    
+    plt.plot(np.array(dfX['timestamp']), np.array(dfX['value']), color='red', label='training accuracy')
+    plt.legend() # 显示图例
+    plt.show() 
+    
+    #===========================================================================
+    # jsonData = {'timestamp': '', 'value': "", 'label': ''}
+    # file = open("D:\\kpi\\result_tmp.txt", 'w')
+    # for  row in truth.iterrows():
+    #     jsonData['timestamp'] = row['timestamp']
+    #     jsonData['value'] = row['value']   
+    #     jsonData['label'] = row['label']       
+    #     file.write(json.dumps(jsonData, ensure_ascii=False) + '\n')
+    # file.close()
+    # print("end....")
+    #===========================================================================
+    
 
 
 
